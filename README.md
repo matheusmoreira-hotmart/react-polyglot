@@ -1,3 +1,7 @@
+<a href="https://codeclimate.com/github/nayaabkhan/react-polyglot/maintainability"><img src="https://api.codeclimate.com/v1/badges/fd8c57e662c5f08ba77e/maintainability" /></a>
+<a href="https://codeclimate.com/github/nayaabkhan/react-polyglot/test_coverage"><img src="https://api.codeclimate.com/v1/badges/fd8c57e662c5f08ba77e/test_coverage" /></a>
+<a href="https://travis-ci.org/nayaabkhan/react-polyglot"><img src="https://travis-ci.org/nayaabkhan/react-polyglot.svg?branch=master" /></a>
+
 # React Polyglot
 Provides higher order component for using Polyglot with React
 
@@ -53,6 +57,50 @@ Greeter.propTypes = {
 export default translate()(Greeter);
 ```
 
+## How to provide context in your tests
+
+Use a simple helper to wrap your components in a context.
+
+```js
+export const wrapWithContext = function (component, context, contextTypes) {
+  const wrappedComponent = React.createClass({
+    childContextTypes: contextTypes,
+    getChildContext() {
+      return context;
+    },
+    render() {
+      return component;
+    },
+  });
+  return React.createElement(wrappedComponent);
+}
+```
+
+Then use it inside your tests.
+
+```js
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import Polyglot from 'node-polyglot';
+import Greeter from './greeter';
+import { wrapWithContext } from './helpers';
+
+const polyglot = new Polyglot({
+  locale: 'en',
+  phrases: {"hello_name": "Hello, %{name}."},
+});
+
+const greeterWithContext = wrapWithContext(
+  <Greeter name="Batsy" />,
+  { t: polyglot.t.bind(polyglot) },
+  { t: React.PropTypes.func }
+);
+
+// use greeterWithContext in your tests
+// here it is shown how to use it with renderToString
+console.log(renderToString(greeterWithContext));
+```
+
 ## Work in progress
 
 Tests and Contributing guides are in progress.
@@ -65,3 +113,6 @@ Tests and Contributing guides are in progress.
 * 0.2.1 Add 'files' to keep in the package
 * 0.2.2 Add babel-cli for the commonjs build
 * 0.2.3 Add prop-types and start using that instead of React.PropTypes [PR#6](https://github.com/nayaabkhan/react-polyglot/pull/6)
+* 0.2.4 Add a section on 'How to provide context in tests' [PR#10](https://github.com/nayaabkhan/react-polyglot/pull/10)
+* 0.2.5 Prevent creation of multiple instances on receiving new props [PR#9](https://github.com/nayaabkhan/react-polyglot/pull/9)
+* 0.2.6 Add React v16 as a peer dependency [PR#12](https://github.com/nayaabkhan/react-polyglot/pull/12)

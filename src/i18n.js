@@ -1,29 +1,32 @@
-import React, { Component } from 'react';
+import { Component, Children } from 'react';
 import PropTypes from 'prop-types';
-
 import Polyglot, { updatePolyglot } from './provider';
 
 // Provider root component
 export default class I18n extends Component {
   constructor(props) {
-    super(props);
-    
+    super(props)
+
     updatePolyglot(props.locale, props.messages);
   }
 
   getChildContext() {
-    return { t: Polyglot.t.bind(Polyglot) };
+    return { t: this._polyglot.t.bind(this._polyglot) }
   }
-  
+
   componentWillReceiveProps(newProps) {
     if (newProps.locale !== this.props.locale) {
-      updatePolyglot(newProps.locale, newProps.messages);
+      Polyglot.locale(newProps.locale)
+    }
+
+    if (newProps.messages !== this.props.messages) {
+      Polyglot.replace(newProps.messages)
     }
   }
 
   render() {
-    const children = this.props.children;
-    return React.Children.only(children);
+    const children = this.props.children
+    return Children.only(children)
   }
 }
 
@@ -31,8 +34,8 @@ I18n.propTypes = {
   locale: PropTypes.string.isRequired,
   messages: PropTypes.object.isRequired,
   children: PropTypes.element.isRequired,
-};
+}
 
 I18n.childContextTypes = {
   t: PropTypes.func.isRequired,
-};
+}
