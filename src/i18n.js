@@ -1,17 +1,17 @@
-import { Component, Children } from 'react';
-import PropTypes from 'prop-types';
-import Polyglot, { updatePolyglot } from './provider';
+import { Component, Children } from 'react'
+import PropTypes from 'prop-types'
+import Polyglot, { updatePolyglot } from './provider'
 
 // Provider root component
 export default class I18n extends Component {
   constructor(props) {
     super(props)
 
-    updatePolyglot(props.locale, props.messages);
+    updatePolyglot(props.locale, props.messages)
   }
 
   getChildContext() {
-    return { t: this._polyglot.t.bind(this._polyglot) }
+    return { t: Polyglot.t.bind(Polyglot) }
   }
 
   componentWillReceiveProps(newProps) {
